@@ -1,0 +1,1470 @@
+openapi: 3.0.3
+info:
+  title: Digikala API
+  version: 1.0.0
+  description: API documentation for Digikala e-commerce platform
+paths:
+  /api/addresses/:
+    get:
+      operationId: addresses_retrieve
+      description: Retrieve all addresses associated with the authenticated user.
+      summary: List user addresses
+      tags:
+      - User Profile
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: List of user addresses
+    post:
+      operationId: addresses_create
+      description: Add a new address to the authenticated user's profile.
+      summary: Create new address
+      tags:
+      - User Profile
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          description: Address created successfully
+        '400':
+          description: Invalid input data
+    put:
+      operationId: addresses_update
+      description: Update an existing address in the user's profile.
+      summary: Update address
+      tags:
+      - User Profile
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Address updated successfully
+        '404':
+          description: Address not found
+    delete:
+      operationId: addresses_destroy
+      description: Remove an address from the user's profile.
+      summary: Delete address
+      tags:
+      - User Profile
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: Address deleted
+        '404':
+          description: Address not found
+  /api/audit-logs/:
+    get:
+      operationId: audit_logs_retrieve
+      description: Retrieve audit logs for system activities. Admin access required.
+      summary: List audit logs
+      tags:
+      - System
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: List of audit logs
+    post:
+      operationId: audit_logs_create
+      description: Create a new audit log entry. System use only.
+      summary: Create audit log
+      tags:
+      - System
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          description: Audit log created successfully
+    put:
+      operationId: audit_logs_update
+      description: Update an existing audit log entry. Admin access required.
+      summary: Update audit log
+      tags:
+      - System
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Audit log updated
+        '404':
+          description: Audit log not found
+    delete:
+      operationId: audit_logs_destroy
+      description: Delete an audit log entry. Admin access required.
+      summary: Delete audit log
+      tags:
+      - System
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: Audit log deleted
+        '404':
+          description: Audit log not found
+  /api/auth/login/:
+    post:
+      operationId: auth_login_create
+      description: Authenticate with username/email and password to obtain JWT tokens
+        for API access. The access token is valid for 60 minutes, while the refresh
+        token is valid for 1 day.
+      summary: User login
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: Login successful
+        '401':
+          description: Invalid credentials
+  /api/auth/logout/:
+    post:
+      operationId: auth_logout_create
+      description: Logout the current user by blacklisting the refresh token
+      summary: Logout
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh:
+                  type: string
+              required:
+              - refresh
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+          description: ''
+  /api/auth/register/:
+    post:
+      operationId: auth_register_create
+      description: Create a new user account with email and phone verification. Returns
+        authentication tokens on successful registration.
+      summary: Register new user
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          description: User successfully registered
+        '400':
+          description: Invalid input data
+  /api/auth/token/refresh/:
+    post:
+      operationId: auth_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/categories/:
+    get:
+      operationId: categories_retrieve
+      description: Retrieve all product categories available in the store.
+      summary: List all categories
+      tags:
+      - Categories
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: List of product categories
+    post:
+      operationId: categories_create
+      description: Create a new product category. Admin access required.
+      summary: Create new category
+      tags:
+      - Categories
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          description: Category created successfully
+        '403':
+          description: Permission denied, admin access required
+    put:
+      operationId: categories_update
+      description: Update an existing product category. Admin access required.
+      summary: Update category
+      tags:
+      - Categories
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Category updated successfully
+        '404':
+          description: Category not found
+    delete:
+      operationId: categories_destroy
+      description: Delete a product category. Admin access required.
+      summary: Delete category
+      tags:
+      - Categories
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: Category deleted
+        '404':
+          description: Category not found
+  /api/debug/users/:
+    get:
+      operationId: debug_users_retrieve
+      description: Get information about existing users in the database (development
+        only).
+      summary: Debug database users
+      tags:
+      - System
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: User information
+  /api/discounts/:
+    get:
+      operationId: discounts_retrieve
+      description: Retrieve all available product discounts.
+      summary: List discounts
+      tags:
+      - Products
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: List of discounts
+    post:
+      operationId: discounts_create
+      description: Create a new product discount. Admin access required.
+      summary: Create discount
+      tags:
+      - Products
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          description: Discount created successfully
+        '403':
+          description: Permission denied, admin access required
+    put:
+      operationId: discounts_update
+      description: Update an existing product discount. Admin access required.
+      summary: Update discount
+      tags:
+      - Products
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Discount updated successfully
+        '404':
+          description: Discount not found
+    delete:
+      operationId: discounts_destroy
+      description: Delete a product discount. Admin access required.
+      summary: Delete discount
+      tags:
+      - Products
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: Discount deleted
+        '404':
+          description: Discount not found
+  /api/health/detailed/:
+    get:
+      operationId: health_detailed_retrieve
+      description: Get detailed system health information including Python, Django,
+        database, and system resources. Used for monitoring and diagnostics.
+      summary: System Health Check
+      tags:
+      - System
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: Complete system health information
+  /api/orders/:
+    get:
+      operationId: orders_retrieve
+      description: Retrieve all orders placed by the authenticated user.
+      summary: List user orders
+      tags:
+      - Orders
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: List of user orders
+    post:
+      operationId: orders_create
+      description: Place a new order with items from the user's cart.
+      summary: Create new order
+      tags:
+      - Orders
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          description: Order created successfully
+        '400':
+          description: Invalid input data
+    put:
+      operationId: orders_update
+      description: Update an existing order. Admin or order owner access required.
+      summary: Update order
+      tags:
+      - Orders
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Order updated successfully
+        '404':
+          description: Order not found
+    delete:
+      operationId: orders_destroy
+      description: Cancel/delete an order. Admin or order owner access required.
+      summary: Delete order
+      tags:
+      - Orders
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: Order deleted
+        '404':
+          description: Order not found
+  /api/orders/{order_id}/:
+    get:
+      operationId: orders_retrieve_2
+      description: Retrieve all orders placed by the authenticated user.
+      summary: List user orders
+      parameters:
+      - in: path
+        name: order_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Orders
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: List of user orders
+    post:
+      operationId: orders_create_2
+      description: Place a new order with items from the user's cart.
+      summary: Create new order
+      parameters:
+      - in: path
+        name: order_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Orders
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          description: Order created successfully
+        '400':
+          description: Invalid input data
+    put:
+      operationId: orders_update_2
+      description: Update an existing order. Admin or order owner access required.
+      summary: Update order
+      parameters:
+      - in: path
+        name: order_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Orders
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Order updated successfully
+        '404':
+          description: Order not found
+    delete:
+      operationId: orders_destroy_2
+      description: Cancel/delete an order. Admin or order owner access required.
+      summary: Delete order
+      parameters:
+      - in: path
+        name: order_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Orders
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: Order deleted
+        '404':
+          description: Order not found
+  /api/payments/:
+    get:
+      operationId: payments_retrieve
+      description: Retrieve payment information for all orders. Admin access required.
+      summary: List payment records
+      tags:
+      - Orders
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: List of payment records
+    post:
+      operationId: payments_create
+      description: Process a payment for an order.
+      summary: Process payment
+      tags:
+      - Orders
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          description: Payment processed successfully
+        '400':
+          description: Invalid payment information
+    put:
+      operationId: payments_update
+      description: Update an existing payment record. Admin access required.
+      summary: Update payment
+      tags:
+      - Orders
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Payment updated successfully
+        '404':
+          description: Payment not found
+    delete:
+      operationId: payments_destroy
+      description: Delete a payment record. Admin access required.
+      summary: Delete payment
+      tags:
+      - Orders
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: Payment deleted successfully
+        '404':
+          description: Payment not found
+  /api/product-images/:
+    get:
+      operationId: product_images_retrieve
+      description: Retrieve all product images and detailed descriptions.
+      summary: List product images and descriptions
+      tags:
+      - Products
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: List of product images and descriptions
+    post:
+      operationId: product_images_create
+      description: Add a new image and detailed description for a product. Admin access
+        required.
+      summary: Create product image and description
+      tags:
+      - Products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductImagesDescriptionsRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProductImagesDescriptionsRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProductImagesDescriptionsRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          description: Product image and description created successfully
+        '400':
+          description: Invalid input data
+    put:
+      operationId: product_images_update
+      description: Update an existing product image and description. Admin access
+        required.
+      summary: Update product image and description
+      tags:
+      - Products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductImagesDescriptionsRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProductImagesDescriptionsRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProductImagesDescriptionsRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Product image and description updated successfully
+        '404':
+          description: Product image and description not found
+    delete:
+      operationId: product_images_destroy
+      description: Remove a product image and its detailed description. Admin access
+        required.
+      summary: Delete product image and description
+      tags:
+      - Products
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: Product image and description deleted successfully
+        '404':
+          description: Product image and description not found
+  /api/products/:
+    get:
+      operationId: products_retrieve
+      description: Retrieve a paginated list of all available products with optional
+        filtering.
+      summary: List all products
+      tags:
+      - Products
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: List of products
+    post:
+      operationId: products_create
+      description: Add a new product to the catalog. Admin access required.
+      summary: Create new product
+      tags:
+      - Products
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          description: Product created successfully
+        '400':
+          description: Invalid input data
+        '403':
+          description: Permission denied, admin access required
+    put:
+      operationId: products_update
+      description: Update an existing product. Admin access required.
+      summary: Update product
+      tags:
+      - Products
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Product updated successfully
+        '404':
+          description: Product not found
+    delete:
+      operationId: products_destroy
+      description: Delete a product from the catalog. Admin access required.
+      summary: Delete product
+      tags:
+      - Products
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: Product deleted
+        '404':
+          description: Product not found
+  /api/products/{product_id}/:
+    get:
+      operationId: products_retrieve_2
+      description: Retrieve a paginated list of all available products with optional
+        filtering.
+      summary: List all products
+      parameters:
+      - in: path
+        name: product_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Products
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: List of products
+    post:
+      operationId: products_create_2
+      description: Add a new product to the catalog. Admin access required.
+      summary: Create new product
+      parameters:
+      - in: path
+        name: product_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Products
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          description: Product created successfully
+        '400':
+          description: Invalid input data
+        '403':
+          description: Permission denied, admin access required
+    put:
+      operationId: products_update_2
+      description: Update an existing product. Admin access required.
+      summary: Update product
+      parameters:
+      - in: path
+        name: product_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Products
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Product updated successfully
+        '404':
+          description: Product not found
+    delete:
+      operationId: products_destroy_2
+      description: Delete a product from the catalog. Admin access required.
+      summary: Delete product
+      parameters:
+      - in: path
+        name: product_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Products
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: Product deleted
+        '404':
+          description: Product not found
+  /api/reviews/:
+    get:
+      operationId: reviews_retrieve
+      description: Retrieve all product reviews with ratings and comments.
+      summary: List all reviews
+      tags:
+      - Products
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: List of product reviews
+    post:
+      operationId: reviews_create
+      description: Add a new review for a product with rating and comments.
+      summary: Create product review
+      tags:
+      - Products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReviewRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReviewRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          description: Review created successfully
+        '400':
+          description: Invalid input data
+    put:
+      operationId: reviews_update
+      description: Update an existing product review.
+      summary: Update product review
+      tags:
+      - Products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReviewRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReviewRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Review updated successfully
+        '404':
+          description: Review not found
+    delete:
+      operationId: reviews_destroy
+      description: Delete a product review.
+      summary: Delete product review
+      tags:
+      - Products
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: Review deleted successfully
+        '404':
+          description: Review not found
+  /api/schema/:
+    get:
+      operationId: schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      tags:
+      - schema
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/shippings/:
+    get:
+      operationId: shippings_retrieve
+      description: Retrieve shipping information for all orders.
+      summary: List shipping information
+      tags:
+      - Orders
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: List of shipping records
+    post:
+      operationId: shippings_create
+      description: Create shipping information for an order. Admin access required.
+      summary: Create shipping record
+      tags:
+      - Orders
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          description: Shipping information created
+        '400':
+          description: Invalid input data
+    put:
+      operationId: shippings_update
+      description: Update shipping details for an order. Admin access required.
+      summary: Update shipping information
+      tags:
+      - Orders
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Shipping information updated
+        '404':
+          description: Shipping record not found
+    delete:
+      operationId: shippings_destroy
+      description: Delete shipping information. Admin access required.
+      summary: Delete shipping record
+      tags:
+      - Orders
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: Shipping record deleted
+        '404':
+          description: Shipping record not found
+  /api/subcategories/:
+    get:
+      operationId: subcategories_retrieve
+      description: Retrieve all product subcategories available in the store.
+      summary: List all subcategories
+      tags:
+      - Categories
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: List of subcategories
+    post:
+      operationId: subcategories_create
+      description: Create a new product subcategory. Admin access required.
+      summary: Create new subcategory
+      tags:
+      - Categories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubCategoryRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SubCategoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SubCategoryRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          description: Subcategory created successfully
+        '400':
+          description: Invalid input data
+        '403':
+          description: Permission denied, admin access required
+    put:
+      operationId: subcategories_update
+      description: Update an existing product subcategory. Admin access required.
+      summary: Update subcategory
+      tags:
+      - Categories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubCategoryRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SubCategoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SubCategoryRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Subcategory updated successfully
+        '404':
+          description: Subcategory not found
+    delete:
+      operationId: subcategories_destroy
+      description: Delete a product subcategory. Admin access required.
+      summary: Delete subcategory
+      tags:
+      - Categories
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: Subcategory deleted
+        '404':
+          description: Subcategory not found
+  /api/subcategories/{id}/:
+    get:
+      operationId: subcategories_retrieve_2
+      description: Retrieve all product subcategories available in the store.
+      summary: List all subcategories
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Categories
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: List of subcategories
+    post:
+      operationId: subcategories_create_2
+      description: Create a new product subcategory. Admin access required.
+      summary: Create new subcategory
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Categories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubCategoryRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SubCategoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SubCategoryRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          description: Subcategory created successfully
+        '400':
+          description: Invalid input data
+        '403':
+          description: Permission denied, admin access required
+    put:
+      operationId: subcategories_update_2
+      description: Update an existing product subcategory. Admin access required.
+      summary: Update subcategory
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Categories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubCategoryRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SubCategoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SubCategoryRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Subcategory updated successfully
+        '404':
+          description: Subcategory not found
+    delete:
+      operationId: subcategories_destroy_2
+      description: Delete a product subcategory. Admin access required.
+      summary: Delete subcategory
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Categories
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: Subcategory deleted
+        '404':
+          description: Subcategory not found
+  /api/verify-email/:
+    post:
+      operationId: verify_email_create
+      description: Send a verification email to the user's registered email address.
+      summary: Send verification email
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailVerificationRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmailVerificationRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EmailVerificationRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          description: Verification email sent successfully
+        '400':
+          description: Invalid input data
+    put:
+      operationId: verify_email_update
+      description: Verify the token sent to the user's email.
+      summary: Verify email token
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailVerificationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmailVerificationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EmailVerificationRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Email verified successfully
+        '400':
+          description: Invalid token or expired
+  /api/verify-sms/:
+    post:
+      operationId: verify_sms_create
+      description: Send a verification code via SMS to the user's registered phone
+        number.
+      summary: Send verification SMS
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SMSVerificationRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SMSVerificationRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SMSVerificationRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          description: Verification SMS sent successfully
+        '400':
+          description: Invalid input data
+    put:
+      operationId: verify_sms_update
+      description: Verify the code sent to the user's phone via SMS.
+      summary: Verify SMS code
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SMSVerificationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SMSVerificationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SMSVerificationRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Phone number verified successfully
+        '400':
+          description: Invalid code or expired
+  /api/wishlists/:
+    get:
+      operationId: wishlists_retrieve
+      description: Retrieve all items in the authenticated user's wishlist.
+      summary: List wishlist items
+      tags:
+      - User Profile
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: List of wishlist items
+    post:
+      operationId: wishlists_create
+      description: Add a product to the authenticated user's wishlist.
+      summary: Add to wishlist
+      tags:
+      - User Profile
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          description: Item added to wishlist
+        '400':
+          description: Invalid input data
+    delete:
+      operationId: wishlists_destroy
+      description: Remove a product from the authenticated user's wishlist.
+      summary: Remove from wishlist
+      tags:
+      - User Profile
+      security:
+      - jwtAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: Item removed from wishlist
+        '404':
+          description: Wishlist item not found
+components:
+  schemas:
+    EmailVerificationRequest:
+      type: object
+      properties:
+        token:
+          type: string
+          format: uuid
+      required:
+      - token
+    EmailVerificationRequestRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+      required:
+      - email
+    ProductImagesDescriptionsRequest:
+      type: object
+      properties:
+        product_Images_Description:
+          type: string
+          nullable: true
+        product_Description:
+          type: string
+          nullable: true
+        product:
+          type: integer
+      required:
+      - product
+    RatingEnum:
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      type: integer
+      description: |-
+        * `1` - 1
+        * `2` - 2
+        * `3` - 3
+        * `4` - 4
+        * `5` - 5
+    ReviewRequest:
+      type: object
+      properties:
+        rating:
+          allOf:
+          - $ref: '#/components/schemas/RatingEnum'
+          minimum: 0
+          maximum: 32767
+        comment:
+          type: string
+          nullable: true
+        product:
+          type: integer
+        user:
+          type: integer
+      required:
+      - product
+      - user
+    SMSVerificationRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          minLength: 1
+          maxLength: 6
+      required:
+      - code
+    SMSVerificationRequestRequest:
+      type: object
+      properties:
+        phone_number:
+          type: string
+          minLength: 1
+          maxLength: 11
+      required:
+      - phone_number
+    SubCategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        slug:
+          type: string
+          minLength: 1
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+          nullable: true
+        Category:
+          type: integer
+      required:
+      - Category
+      - name
+      - slug
+    TokenObtainPairRequest:
+      type: object
+      properties:
+        login_id:
+          type: string
+          minLength: 1
+          description: Enter your username or email
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - login_id
+      - password
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
+    TokenRefreshRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+          minLength: 1
+      required:
+      - refresh
+    UserRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 254
+        phone_number:
+          type: string
+          minLength: 1
+          maxLength: 11
+        first_name:
+          type: string
+          minLength: 1
+          maxLength: 30
+        last_name:
+          type: string
+          minLength: 1
+          maxLength: 30
+        is_active:
+          type: boolean
+        is_staff:
+          type: boolean
+        is_superuser:
+          type: boolean
+      required:
+      - email
+      - first_name
+      - last_name
+      - password
+      - phone_number
+      - username
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

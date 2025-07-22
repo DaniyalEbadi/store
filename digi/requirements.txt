@@ -1,0 +1,9 @@
+Django>=4.2.5,<5.0
+djangorestframework>=3.14.0 
+djangorestframework-simplejwt>=5.3.2  
+drf-spectacular>=0.27.0
+drf-spectacular-sidecar>=2024.3.1  # required for Django collectstatic
+django-cors-headers>=4.0.0
+psycopg2>=2.9.7 
+psutil>=5.9.0  # For system monitoring
+django-health-check>=3.17.0  # For health checks 
